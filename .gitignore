@@ -1,0 +1,101 @@
+# ── Python ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# ── Virtual environment ─────────────────────────────────
+venv/
+venv*/
+.venv/
+env/
+ENV/
+*/Scripts/
+*/site-packages/
+
+# ── Django ──────────────────────────────────────────────
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+
+# ── Rahasia / kredensial (JANGAN commit) ────────────────
+.env
+*.env
+!.env.example
+
+# ── Bobot & artefak model (berat / sensitif) ────────────
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.gguf
+models/
+checkpoints/
+
+# ── Data mentah / suplemen (sensitif) ───────────────────
+data/
+*.xlsx
+*.xls
+*.csv
+
+# ── Layanan ARETA (kode pihak ketiga & log; dipasang ulang via README) ──
+areta_service/vendor/
+areta_service/*.log
+
+# ── Editor / OS ─────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+areta_service/camel_data/
+
+# Data mahasiswa (berisi nama & tulisan tangan) — jangan pernah di-commit
+data_mentah/
+data_siap/
+# Data eksternal (Tibyan: repo tanpa lisensi -> jangan disebarkan ulang)
+data_eksternal/
+
+# Model Tesseract (12 MB, unduh dari github.com/tesseract-ocr/tessdata_best)
+tessdata/
+*.bak_sebelum_tesseract
+_uji_ocr*.py
+_uji_ocr_*.json
+_uji_web*.py
+_uji_web_*.html
+_ukur_areta.ps1
+_areta_ukur_*.log
+_uji_menyeluruh_*
+
+# Cadangan .env (berisi API key)
+.env.bak_*
+_uji_model_d_log.txt
+_uji_produksi_log.txt
+
+# Cadangan, catatan kerja, dan berkas sementara (tidak untuk repo)
+*.bak_*
+*.log
+_e2e_err.log
+_e2e_out.log
+_e2e_result.json
+_uji_profil.py
+pipeline/_*
+sample.pdf
+ocr_bench/
+New folder/
+# Uji kesetaraan ARETA memakai cuplikan QALB-2015 (lisensi terbatas)
+areta_service/_wintest.b64
+# Catatan serah-terima riset: memuat nama orang -> simpan lokal / di Project Claude saja
+HANDOVER_*.md
+# Hitungan kuota & token Gemini (data operasional)
+.imlascan_kuota.json*
+_uji_biaya.py
+_uji_beban_server.log
+_uji_beban_log.txt
+
+# Paket zip siap pasang (besar)
+_paket/
+_buat_paket.py
+_uji_paket_log.txt

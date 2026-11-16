@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Deteksi Imla' — ImlaScan</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;600&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#e1e3e4",
+                        "surface-tint": "#1b6b51",
+                        "surface": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#d9e3f7",
+                        "on-surface-variant": "#3f4944",
+                        "on-secondary-container": "#626566",
+                        "primary": "#004532",
+                        "surface-bright": "#f9f9ff",
+                        "surface-variant": "#d9e3f7",
+                        "tertiary": "#7f000f",
+                        "on-background": "#121c2a",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-primary-container": "#8bd6b7",
+                        "surface-container-high": "#dee9fd",
+                        "surface-dim": "#d0daef",
+                        "background": "#f9f9ff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-surface": "#121c2a",
+                        "on-primary-fixed": "#002116",
+                        "surface-container": "#e6eeff",
+                        "primary-fixed": "#a6f2d1",
+                        "secondary-container": "#e1e3e4",
+                        "secondary-fixed-dim": "#c5c7c8",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-tertiary-container": "#ffb5af",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#273140",
+                        "primary-container": "#065f46",
+                        "on-tertiary-fixed": "#410004",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#191c1d",
+                        "tertiary-container": "#a9081a",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "primary-fixed-dim": "#8bd6b6",
+                        "outline-variant": "#bec9c2",
+                        "outline": "#6f7973",
+                        "inverse-primary": "#8bd6b6",
+                        "on-secondary-fixed-variant": "#454748",
+                        "secondary": "#5c5f60",
+                        "surface-container-low": "#eff3ff",
+                        "on-primary-fixed-variant": "#00513b",
+                        "on-primary": "#ffffff",
+                        "positive": "#146c2e",
+                        "positive-surface": "#c8f0d0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "margin-desktop": "48px",
+                        "stack-sm": "12px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["IBM Plex Sans"],
+                        "display-lg": ["IBM Plex Sans"],
+                        "body-md-arabic": ["IBM Plex Sans Arabic"],
+                        "display-lg-mobile": ["IBM Plex Sans"],
+                        "label-sm": ["Inter"],
+                        "body-lg-arabic": ["IBM Plex Sans Arabic"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md-arabic": ["18px", {"lineHeight": "32px", "fontWeight": "400"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-lg-arabic": ["20px", {"lineHeight": "36px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .drag-over {
+            border-color: #004532 !important;
+            background-color: rgba(139, 214, 182, 0.1);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* --- Custom Scrollbar untuk Box Terpisah --- */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* --- Animasi Sorotan saat Kartu Diklik --- */
+        @keyframes pulse-highlight {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 69, 50, 0); }
+            50% { transform: scale(1.08); box-shadow: 0 0 12px rgba(0, 69, 50, 0.4); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 69, 50, 0); }
+        }
+        .active-word-target {
+            animation: pulse-highlight 0.8s ease-in-out 2;
+            outline: 2px solid #004532;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* --- Styling Loading Overlay --- */
+        .loading-overlay {
+            display: none; 
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 9999; 
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            backdrop-filter: blur(3px);
+        }
+        .spinner {
+            border: 6px solid #e1e3e4; 
+            border-top: 6px solid #004532;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            margin-top: 24px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #004532;
+            font-family: "IBM Plex Sans", sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body class="bg-surface font-headline-md text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed relative">
+
+    <!-- Elemen Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">
+            <span class="material-symbols-outlined">hourglass_top</span>
+            <span id="loadingMsg">Menganalisis teks... Mohon tunggu.</span>
+        </div>
+    </div>
+
+    <header class="bg-surface dark:bg-surface-dim docked full-width top-0 border-b border-outline-variant dark:border-outline z-50 sticky">
+        <nav class="flex justify-between items-center w-full px-6 md:px-8 py-base">
+            <div class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+                ImlaScan
+            </div>
+            <div class="hidden md:flex items-center space-x-stack-lg"></div>
+            <div class="flex items-center space-x-gutter"></div>
+        </nav>
+    </header>
+
+    <main class="min-h-screen flex flex-col items-center">
+        <section class="w-full max-w-container-max px-margin-desktop py-stack-lg text-center">
+            <h1 class="font-display-lg text-display-lg mb-base text-primary">Deteksi Imla'</h1>
+            <p class="text-on-surface-variant max-w-2xl mx-auto font-headline-md text-headline-md opacity-80">
+                Deteksi otomatis kesalahan penulisan (Imla'/ortografi) dan bentuk kata (morfologi) pada teks bahasa Arab, lengkap dengan kaidah dan saran perbaikan.
+            </p>
+        </section>
+
+        {% if error_message %}
+        <div class="w-full max-w-4xl mx-auto mb-6 bg-error-container text-error p-4 rounded-xl text-center font-bold flex items-center justify-center gap-2 shadow-sm">
+            <span class="material-symbols-outlined">warning</span>
+            {{ error_message }}
+        </div>
+        {% endif %}
+
+        {% if info_message %}
+        <div class="w-full max-w-4xl mx-auto mb-6 bg-amber-50 text-amber-900 border border-amber-300 p-4 rounded-xl flex items-start gap-2 shadow-sm text-sm">
+            <span class="material-symbols-outlined text-amber-600">info</span>
+            <span>{{ info_message }}</span>
+        </div>
+        {% endif %}
+
+        {% if not hasil_analisis %}
+        <form method="POST" action="" enctype="multipart/form-data" class="w-full max-w-4xl px-margin-mobile md:px-0 pb-stack-lg mx-auto flex flex-col" id="scanForm">
+            {% csrf_token %}
+            <div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col md:flex-row h-auto min-h-[500px]">
+
+                <div class="flex-1 flex flex-col p-stack-md border-b md:border-b-0 md:border-r border-outline-variant">
+
+                    <div class="flex space-x-gutter mb-stack-md border-b border-outline-variant">
+                        <button type="button" class="pb-2 border-b-2 border-primary text-primary font-bold text-label-sm transition-all" id="tab-upload" onclick="switchTab('upload')">UPLOAD GAMBAR OCR</button>
+                        <button type="button" class="pb-2 border-b-2 border-transparent text-on-surface-variant text-label-sm hover:text-primary transition-all" id="tab-paste" onclick="switchTab('paste')">SALIN TEKS</button>
+                    </div>
+
+                    <!-- Upload View -->
+                    <div class="flex-1 flex flex-col" id="view-upload">
+                        <input name="dokumen_arab" accept=".txt,image/*,.pdf" class="hidden" id="file-input" type="file"/>
+                        <div onclick="document.getElementById('file-input').click()" class="flex-1 border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center p-stack-lg hover:border-primary hover:bg-surface-container-lowest transition-all cursor-pointer group" id="drop-zone">
+                            <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-stack-md group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-primary text-[32px]">upload_file</span>
+                            </div>
+                            <p class="font-bold text-headline-md text-on-surface mb-base text-center">Lepaskan file di sini</p>
+                            <p class="text-label-sm text-on-surface-variant text-center">Mendukung <strong>.txt</strong>, <strong>PDF</strong>, dan <strong>gambar</strong>. Untuk PDF/gambar, pilih mesin OCR di bawah <em>(eksperimental)</em>.</p>
+                            <button type="button" class="mt-stack-md bg-secondary-container text-on-secondary-fixed-variant px-stack-md py-stack-sm rounded-lg font-label-sm hover:bg-outline-variant transition-colors">
+                                Pilih dari Komputer
+                            </button>
+                            <p id="file-status" class="hidden mt-stack-md font-bold text-primary text-label-sm text-center"></p>
+                        </div>
+
+                        <!-- Pilihan mesin OCR (hanya dipakai untuk PDF/gambar) -->
+                        <fieldset class="mt-stack-md" id="ocr-choice">
+                            <legend class="font-bold text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Mesin OCR untuk PDF / gambar</legend>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="ocr_engine" value="gemini" class="peer sr-only" checked/>
+                                    <div class="h-full border-2 border-outline-variant rounded-xl p-3 transition-all hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary-fixed/30 peer-focus-visible:ring-2 peer-focus-visible:ring-primary">
+                                        <div class="font-bold text-sm text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">auto_awesome</span>Gemini OCR</div>
+                                        <div class="text-[11px] leading-snug text-on-surface-variant mt-1">Model AI daring · ±30 dtk · butuh internet &amp; kuota API · bisa ikut "membetulkan" ejaan</div>
+                                        {% if kuota_gemini.terbatas %}
+                                        <div id="kuota-gemini" class="text-[11px] leading-snug mt-1 font-bold {% if kuota_gemini.sisa %}text-primary{% else %}text-error{% endif %}">
+                                            {% if kuota_gemini.sisa %}Sisa kuota hari ini: {{ kuota_gemini.sisa }} halaman
+                                            {% else %}Kuota hari ini habis — otomatis memakai Tesseract{% endif %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="ocr_engine" value="tesseract" class="peer sr-only"/>
+                                    <div class="h-full border-2 border-outline-variant rounded-xl p-3 transition-all hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary-fixed/30 peer-focus-visible:ring-2 peer-focus-visible:ring-primary">
+                                        <div class="font-bold text-sm text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">memory</span>Tesseract OCR</div>
+                                        <div class="text-[11px] leading-snug text-on-surface-variant mt-1">Lokal · ±2 dtk · tanpa internet · dilatih untuk teks cetak, kasar pada tulisan tangan</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="ocr_engine" value="keduanya" class="peer sr-only"/>
+                                    <div class="h-full border-2 border-outline-variant rounded-xl p-3 transition-all hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary-fixed/30 peer-focus-visible:ring-2 peer-focus-visible:ring-primary">
+                                        <div class="font-bold text-sm text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">compare</span>Bandingkan keduanya</div>
+                                        <div class="text-[11px] leading-snug text-on-surface-variant mt-1">Menjalankan dua-duanya dan menampilkan hasil berdampingan · selama Gemini</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div class="hidden flex-1 flex flex-col" id="view-paste">
+                        <textarea name="teks_arab" class="flex-1 w-full p-stack-md border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary font-body-lg-arabic text-body-lg-arabic resize-none placeholder:text-on-surface-variant/40" dir="rtl" placeholder="...أدخل النص العربي هنا"></textarea>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-80 bg-surface-container-lowest p-stack-md flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-label-sm text-on-surface-variant uppercase tracking-wider mb-stack-md">Cakupan Analisis</h3>
+                        <div class="space-y-stack-sm text-label-sm text-on-surface-variant">
+                            <div class="flex items-start gap-2">
+                                <span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                                <span><strong class="text-on-surface">Ortografi (Imla')</strong> — Hamzah, Ta' Marbuthah, Alif/Ya, dan kaidah penulisan lainnya.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                                <span><strong class="text-on-surface">Morfologi</strong> — bentuk & infleksi kata (dalam pengembangan).</span>
+                            </div>
+                            <div class="flex items-start gap-2 opacity-70">
+                                <span class="material-symbols-outlined text-[18px]">block</span>
+                                <span>Sintaksis / I'rab / Nahwu <em>di luar cakupan</em>.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-stack-lg space-y-stack-sm">
+                        <button type="submit" id="submitBtn" class="w-full bg-primary text-on-primary py-stack-md rounded-xl font-bold text-headline-md flex items-center justify-center gap-2 hover:opacity-90 shadow-lg active:scale-[0.98] transition-all">
+                            <span>Periksa Sekarang</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <p class="text-center text-label-sm text-on-surface-variant px-stack-sm">
+                            Memeriksa ejaan (Imla') dan bentuk kata berdasarkan kaidah.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form> 
+        {% else %}
+
+        <!-- Safe JSON Data Script for JS Interaction -->
+        {{ hasil_analisis.extracted_text|json_script:"extracted-text-data" }}
+        {{ hasil_analisis.errors|json_script:"errors-data" }}
+
+        <section class="w-full max-w-6xl mx-auto px-margin-mobile md:px-4 mb-stack-lg" id="hasil-analisis">
+            <div class="bg-surface-container-lowest border-2 border-primary/20 rounded-xl p-6 shadow-md">
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-outline-variant pb-4 mb-6 gap-3">
+                    <h2 class="font-headline-md text-headline-md text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined">analytics</span>
+                        Laporan Deteksi Imla'
+                    </h2>
+                    <span class="text-xs text-on-surface-variant bg-surface px-3 py-1.5 rounded-full border border-outline-variant flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm text-primary">touch_app</span>
+                        Klik pada kesalahan untuk menuju ke teks asal
+                    </span>
+                </div>
+                <div class="-mt-3 mb-6 text-xs text-on-surface-variant">
+                    Mesin koreksi &amp; penanda jenis kesalahan: <strong class="text-on-surface">{{ hasil_analisis.tagger }}</strong>
+                    {% if hasil_analisis.tagger == "lexicon" %}<span class="text-error">— model AraT5 tidak termuat, memakai daftar kata sederhana.</span>{% endif %}
+                </div>
+
+                {% if ocr_bandingan.tunggal %}
+                <!-- SATU MESIN OCR: cukup baris info ringkas -->
+                {% for k in ocr_bandingan.kolom %}
+                <div class="mb-6 bg-surface rounded-xl border border-outline-variant px-5 py-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                    <span class="material-symbols-outlined text-primary text-[20px]">document_scanner</span>
+                    <span class="font-bold text-on-surface">Mesin OCR: {{ k.label }}</span>
+                    <span class="text-xs text-on-surface-variant">{{ k.words }} kata · {{ k.chars }} karakter · {{ k.seconds }} dtk</span>
+                </div>
+                {% endfor %}
+                {% elif ocr_bandingan %}
+                <!-- PEMBANDING OCR: Gemini vs Tesseract -->
+                <div class="mb-6 bg-surface rounded-xl border border-outline-variant p-5">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4 border-b border-outline-variant/60 pb-2">
+                        <h3 class="font-bold text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">compare</span>
+                            Perbandingan OCR
+                        </h3>
+                        <span class="text-xs text-on-surface-variant">
+                            {% if ocr_bandingan.kemiripan is not None %}
+                            Kemiripan kedua OCR: <strong class="text-on-surface">{{ ocr_bandingan.kemiripan }}%</strong>
+                            <span class="opacity-70">(kesepakatan antar-OCR, bukan akurasi)</span>
+                            {% else %}
+                            Kemiripan tidak dapat dihitung (salah satu OCR gagal).
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {% for k in ocr_bandingan.kolom %}
+                        <div class="rounded-lg bg-white p-4 flex flex-col border {% if k.used %}border-2 border-primary{% else %}border-slate-200{% endif %}">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-on-surface">{{ k.label }}</span>
+                                {% if k.used %}
+                                <span class="bg-primary text-on-primary text-[11px] px-2 py-0.5 rounded-full">dipakai untuk analisis</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-xs text-on-surface-variant mb-2">
+                                {% if k.error %}<span class="text-error">Gagal: {{ k.error }}</span>
+                                {% else %}{{ k.words }} kata · {{ k.chars }} karakter · {{ k.seconds }} dtk{% endif %}
+                            </div>
+                            <div class="flex-1 font-body-md-arabic text-body-md-arabic text-on-surface text-right leading-loose max-h-[260px] overflow-y-auto custom-scrollbar" dir="rtl">{% if k.text %}{{ k.html }}{% else %}<span class="opacity-50">—</span>{% endif %}</div>
+                            {% if k.text and not k.used %}
+                            <form method="POST" action="" class="mt-3 ocr-reanalyze-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="teks_arab" value="{{ k.text }}"/>
+                                <input type="hidden" name="sumber_ocr" value="{{ k.engine }}"/>
+                                <input type="hidden" name="ocr_json" value="{{ ocr_bandingan.json }}"/>
+                                <button type="submit" class="w-full bg-secondary-container text-on-secondary-fixed-variant px-3 py-2 rounded-lg text-xs font-bold hover:bg-outline-variant transition-colors flex items-center justify-center gap-1">
+                                    <span class="material-symbols-outlined text-[18px]">sync</span>
+                                    Analisis ulang memakai teks {{ k.label }}
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <p class="text-xs text-on-surface-variant mt-3 opacity-80">
+                        Kata yang <mark class="bg-tertiary-fixed text-on-tertiary-fixed rounded px-1">disorot</mark> berbeda antara kedua OCR (harakat diabaikan).
+                        Tesseract dilatih untuk teks cetak, sehingga pada tulisan tangan hasilnya biasanya lebih kasar.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- TATA LETAK DUA KOLOM BERDAMPINGAN (SIDE-BY-SIDE GRID) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    
+                    <!-- KOLOM 1: TEKS YANG DIPROSES (BISA DI-SCROLL MANDIRI) -->
+                    <div class="bg-surface rounded-xl border border-outline-variant p-5 flex flex-col h-full">
+                        <div class="flex items-center justify-between mb-3 border-b border-outline-variant/60 pb-2">
+                            <h3 class="font-bold text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">article</span>
+                                Teks yang Diproses{% if ocr_bandingan %} <span class="normal-case font-normal">(sumber: {{ ocr_bandingan.dipakai }})</span>{% endif %}
+                            </h3>
+                            <span class="text-[11px] text-slate-500">Scroll untuk melihat seluruh teks</span>
+                        </div>
+                        
+                        <!-- Box Teks Arab dengan Scroll Terpisah -->
+                        <div id="processed-text-container" class="font-body-lg-arabic text-body-lg-arabic text-on-surface text-right leading-loose max-h-[520px] overflow-y-auto custom-scrollbar p-4 bg-white rounded-lg border border-slate-200 select-text" dir="rtl">
+                            {{ hasil_analisis.extracted_text }}
+                        </div>
+                    </div>
+
+                    <!-- KOLOM 2: RINCIAN KESALAHAN (BISA DI-SCROLL MANDIRI) -->
+                    <div class="flex flex-col h-full bg-surface rounded-xl border border-outline-variant p-5">
+                        <div class="flex items-center justify-between mb-4 border-b border-outline-variant/60 pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined {% if hasil_analisis.total_errors > 0 %}text-error{% else %}text-positive{% endif %} text-[26px]">
+                                    {% if hasil_analisis.total_errors > 0 %}error{% else %}check_circle{% endif %}
+                                </span>
+                                <h3 class="font-bold text-headline-md text-on-surface">
+                                    Kesalahan Ditemukan: 
+                                    <span class="{% if hasil_analisis.total_errors > 0 %}text-error{% else %}text-positive{% endif %}">{{ hasil_analisis.total_errors }}</span>
+                                </h3>
+                            </div>
+                        </div>
+
+                        {% if hasil_analisis.total_errors > 0 %}
+                        <!-- Daftar Kartu Kesalahan dengan Scroll Terpisah -->
+                        <div id="errors-list-container" class="space-y-4 max-h-[520px] overflow-y-auto custom-scrollbar pr-1">
+                            {% for error in hasil_analisis.errors %}
+                            <div id="error-card-{{ forloop.counter0 }}" onclick="jumpToWord({{ forloop.counter0 }})" class="bg-white border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 group">
+
+                                <div class="flex-1 order-2 md:order-1">
+                                    <span id="error-badge-{{ forloop.counter0 }}" class="inline-block bg-error-container text-on-error-container font-bold px-3 py-1 rounded-full text-label-sm mb-2">
+                                        {{ error.error_type }}
+                                    </span>
+                                    <p class="text-on-surface-variant text-label-sm mt-1">
+                                        <strong>Kaidah:</strong> {{ error.rule }}
+                                    </p>
+                                    <p id="error-nomatch-{{ forloop.counter0 }}" class="hidden text-[11px] text-slate-500 mt-1">Posisi kata ini tidak dapat ditandai di teks.</p>
+                                </div>
+
+                                <div class="text-right order-1 md:order-2 bg-surface-container-low p-3 rounded-lg border border-outline-variant min-w-[180px] group-hover:border-primary/40 transition-colors" dir="rtl">
+                                    <div class="text-error font-body-lg-arabic line-through opacity-80 mb-1 text-lg">{{ error.word }}</div>
+                                    <div class="text-primary font-body-lg-arabic font-bold text-xl flex items-center justify-end gap-2">
+                                        <span class="material-symbols-outlined text-primary text-sm">auto_fix_high</span>
+                                        {{ error.suggestion }}
+                                    </div>
+                                </div>
+
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="bg-positive-surface text-positive p-stack-lg rounded-xl border border-positive/30 text-center my-auto">
+                            <span class="material-symbols-outlined text-[64px] mb-3">verified</span>
+                            <p class="font-bold text-headline-md mb-2">Teks Anda Sempurna!</p>
+                            <p class="text-label-sm opacity-80">Tidak ada kesalahan Imla' yang terdeteksi oleh sistem.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <!-- Tombol Kembali ke Halaman Utama -->
+                <div class="mt-6 pt-4 border-t border-outline-variant text-center">
+                    <button onclick="window.location.href=window.location.pathname" type="button" class="bg-primary-container text-on-primary-container px-stack-lg py-stack-sm rounded-xl font-bold hover:opacity-80 transition-opacity flex items-center justify-center gap-2 mx-auto shadow-sm">
+                        <span class="material-symbols-outlined text-xl">refresh</span>
+                        Analisis Teks Baru
+                    </button>
+                </div>
+            </div>
+
+            <!-- Script Interaktivitas Sorotan Kata & 5 Klasifikasi Warna -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const extractedScript = document.getElementById('extracted-text-data');
+                    const errorsScript = document.getElementById('errors-data');
+                    
+                    if (!extractedScript || !errorsScript) return;
+                    
+                    let extractedText = "";
+                    let errorsList = [];
+                    
+                    try {
+                        extractedText = JSON.parse(extractedScript.textContent || '""');
+                        errorsList = JSON.parse(errorsScript.textContent || '[]');
+                    } catch(e) {
+                        console.error("Gagal membaca data hasil analisis", e);
+                        return;
+                    }
+
+                    const textContainer = document.getElementById('processed-text-container');
+                    if (!textContainer || !extractedText) return;
+
+                    // --- 5 Skema Warna Berbeda untuk Klasifikasi Kesalahan ---
+                    const colorStyles = {
+                        rose: {
+                            highlight: 'bg-rose-100 text-rose-950 border-b-2 border-rose-500 font-bold px-1 rounded cursor-pointer hover:bg-rose-200 transition-colors inline-block my-0.5',
+                            badge: 'bg-rose-100 text-rose-800 border border-rose-300',
+                            cardBorder: 'border-l-4 border-l-rose-500 hover:bg-rose-50/30'
+                        },
+                        amber: {
+                            highlight: 'bg-amber-100 text-amber-950 border-b-2 border-amber-500 font-bold px-1 rounded cursor-pointer hover:bg-amber-200 transition-colors inline-block my-0.5',
+                            badge: 'bg-amber-100 text-amber-800 border border-amber-300',
+                            cardBorder: 'border-l-4 border-l-amber-500 hover:bg-amber-50/30'
+                        },
+                        purple: {
+                            highlight: 'bg-purple-100 text-purple-950 border-b-2 border-purple-500 font-bold px-1 rounded cursor-pointer hover:bg-purple-200 transition-colors inline-block my-0.5',
+                            badge: 'bg-purple-100 text-purple-800 border border-purple-300',
+                            cardBorder: 'border-l-4 border-l-purple-500 hover:bg-purple-50/30'
+                        },
+                        sky: {
+                            highlight: 'bg-sky-100 text-sky-950 border-b-2 border-sky-500 font-bold px-1 rounded cursor-pointer hover:bg-sky-200 transition-colors inline-block my-0.5',
+                            badge: 'bg-sky-100 text-sky-800 border border-sky-300',
+                            cardBorder: 'border-l-4 border-l-sky-500 hover:bg-sky-50/30'
+                        },
+                        emerald: {
+                            highlight: 'bg-emerald-100 text-emerald-950 border-b-2 border-emerald-500 font-bold px-1 rounded cursor-pointer hover:bg-emerald-200 transition-colors inline-block my-0.5',
+                            badge: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
+                            cardBorder: 'border-l-4 border-l-emerald-500 hover:bg-emerald-50/30'
+                        }
+                    };
+
+                    // Fungsi Penentu Kategori Warna berdasarkan KODE tag ARETA di awal badge
+                    // (mis. "OH · Hamzah", "OT · Ta' Marbuthah/Ha", "MI · Infleksi kata")
+                    function getColorCategory(errorType, index) {
+                        const code = ((errorType || '').split('·')[0] || '').trim().toUpperCase();
+                        const first = code.split('+')[0];
+                        if (first === 'OH') return 'rose';                       // Hamzah
+                        if (first === 'OA') return 'amber';                      // Alif / Ya / Alif Maqsurah
+                        if (first === 'OT') return 'purple';                     // Ta' Marbuthah / Ha
+                        if (first === 'ON') return 'sky';                        // Nun / Tanwin
+                        if (first === 'MI' || first === 'MT') return 'emerald';  // Morfologi
+                        // Ortografi lain (OD, OM, OR, OG, OS, OC, OW): bergilir agar tetap terbedakan
+                        const fallbacks = ['amber', 'sky', 'purple', 'rose'];
+                        return fallbacks[index % fallbacks.length];
+                    }
+
+                    // Escape HTML dulu: teks berasal dari input pengguna/OCR (cegah XSS)
+                    function escapeHtml(t) {
+                        return String(t || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+                    }
+
+                    // Sorot kata yang salah PER KATA UTUH (bukan potongan huruf), berurutan sesuai
+                    // posisi di teks, dan mengabaikan harakat/tanda baca. Versi lama mencari
+                    // potongan teks pertama yang cocok, sehingga "و" ikut menyorot huruf di dalam
+                    // "روضة" dan kata berharakat (mis. سأتحدّث) tidak pernah tersorot.
+                    const HARAKAT = /[ً-ْٰـ]/g;
+                    function normWord(w) {
+                        return String(w || '').replace(HARAKAT, '').replace(/[^\p{L}\p{N}]/gu, '');
+                    }
+                    const tokens = extractedText.split(/(\s+)/);          // kata & spasi bergantian
+                    const tokenNorm = tokens.map(t => /^\s*$/.test(t) ? null : normWord(t));
+                    const tokenErr = new Array(tokens.length).fill(-1);   // indeks kesalahan per token
+                    let cursor = 0;
+                    errorsList.forEach((error, idx) => {
+                        const target = normWord(error.word);
+                        if (!target) return;
+                        let found = -1;
+                        for (let i = cursor; i < tokens.length && found < 0; i++) {
+                            if (tokenErr[i] < 0 && tokenNorm[i] === target) found = i;
+                        }
+                        for (let i = 0; i < cursor && found < 0; i++) {   // cadangan: cari dari awal
+                            if (tokenErr[i] < 0 && tokenNorm[i] === target) found = i;
+                        }
+                        if (found >= 0) {
+                            tokenErr[found] = idx;
+                            if (found >= cursor) cursor = found + 1;
+                        }
+                    });
+
+                    textContainer.innerHTML = tokens.map((tok, i) => {
+                        const idx = tokenErr[i];
+                        if (idx < 0) return escapeHtml(tok);
+                        const style = colorStyles[getColorCategory(errorsList[idx].error_type, idx)];
+                        return `<mark id="word-target-${idx}" class="${style.highlight}" onclick="scrollToCard(${idx})" title="Klik untuk lihat rincian kesalahan">${escapeHtml(tok)}</mark>`;
+                    }).join('');
+
+                    // Kartu yang katanya tidak ditemukan di teks (mis. gabungan dua kata) diberi tanda
+                    errorsList.forEach((error, idx) => {
+                        if (tokenErr.indexOf(idx) >= 0) return;
+                        const note = document.getElementById(`error-nomatch-${idx}`);
+                        if (note) note.classList.remove('hidden');
+                    });
+
+                    // Terapkan warna unik pada Kartu & Badge Kesalahan di kolom kanan
+                    errorsList.forEach((error, idx) => {
+                        const card = document.getElementById(`error-card-${idx}`);
+                        const badge = document.getElementById(`error-badge-${idx}`);
+                        if (card && badge) {
+                            const catKey = getColorCategory(error.error_type, idx);
+                            const style = colorStyles[catKey];
+                            card.className += ` ${style.cardBorder}`;
+                            badge.className = `inline-block font-bold px-3 py-1 rounded-full text-xs ${style.badge}`;
+                        }
+                    });
+
+                    // Scroll otomatis ke section laporan
+                    const hasilSection = document.getElementById('hasil-analisis');
+                    if(hasilSection) {
+                        setTimeout(() => {
+                            hasilSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                    }
+                });
+
+                // --- Fungsi Interaksi Klik: Jump & Sorot Kata ---
+                window.jumpToWord = function(index) {
+                    const wordEl = document.getElementById(`word-target-${index}`);
+                    const cardEl = document.getElementById(`error-card-${index}`);
+                    
+                    if (wordEl) {
+                        // Bersihkan efek aktif sebelumnya
+                        document.querySelectorAll('.active-word-target').forEach(el => el.classList.remove('active-word-target'));
+                        
+                        // Scroll halus di dalam box kontainer teks saja
+                        wordEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        wordEl.classList.add('active-word-target');
+                        
+                        setTimeout(() => {
+                            wordEl.classList.remove('active-word-target');
+                        }, 2000);
+                    }
+
+                    if (cardEl) {
+                        document.querySelectorAll('.error-card-active').forEach(el => el.classList.remove('error-card-active', 'ring-2', 'ring-primary'));
+                        cardEl.classList.add('error-card-active', 'ring-2', 'ring-primary');
+                    }
+                };
+
+                // Fungsi Klik Kata pada Teks -> Scroll ke Kartu Kesalahan
+                window.scrollToCard = function(index) {
+                    const cardEl = document.getElementById(`error-card-${index}`);
+                    if (cardEl) {
+                        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        window.jumpToWord(index);
+                    }
+                };
+            </script>
+        </section>
+        {% endif %}
+
+        <section class="w-full max-w-container-max px-margin-desktop py-stack-lg">
+            <div class="grid grid-cols-12 gap-gutter">
+                <div class="col-span-12 md:col-span-8 bg-white border border-outline-variant rounded-xl p-stack-lg flex flex-col md:flex-row items-center gap-stack-lg">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-headline-md text-primary mb-stack-sm">Bagaimana ImlaScan Bekerja</h4>
+                        <p class="text-on-surface-variant font-label-sm leading-relaxed">
+                            Berkas dibaca oleh mesin OCR pilihan Anda: Gemini, Tesseract, atau keduanya sebagai pembanding. Teks lalu dikoreksi oleh model AraT5, dan setiap perubahan diberi jenis kesalahan menurut taksonomi ARETA (ortografi dan morfologi). Hasil masih eksperimental dan tidak menggantikan pemeriksaan guru.
+                        </p>
+                    </div>
+                    <div class="w-full md:w-48 h-32 bg-surface-container rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[64px] text-primary-container opacity-20">psychology</span>
+                    </div>
+                </div>
+
+                <div class="col-span-12 md:col-span-4 bg-primary text-on-primary rounded-xl p-stack-lg flex flex-col justify-center">
+                    <div class="text-display-lg font-bold mb-base">AraT5</div>
+                    <p class="font-label-sm">Model koreksi bahasa Arab + penanda jenis kesalahan ARETA.</p>
+                </div>
+
+                <div class="col-span-6 md:col-span-3 bg-white border border-outline-variant rounded-xl p-stack-md text-center hover:border-primary transition-colors">
+                    <span class="material-symbols-outlined text-primary mb-base">spellcheck</span>
+                    <h5 class="font-bold text-label-sm">Cek Imla'</h5>
+                </div>
+                <div class="col-span-6 md:col-span-3 bg-white border border-outline-variant rounded-xl p-stack-md text-center hover:border-primary transition-colors">
+                    <span class="material-symbols-outlined text-primary mb-base">compare</span>
+                    <h5 class="font-bold text-label-sm">OCR Ganda</h5>
+                </div>
+                <div class="col-span-6 md:col-span-3 bg-white border border-outline-variant rounded-xl p-stack-md text-center hover:border-primary transition-colors">
+                    <span class="material-symbols-outlined text-primary mb-base">auto_fix_high</span>
+                    <h5 class="font-bold text-label-sm">Saran Perbaikan</h5>
+                </div>
+                <div class="col-span-6 md:col-span-3 bg-white border border-outline-variant rounded-xl p-stack-md text-center hover:border-primary transition-colors">
+                    <span class="material-symbols-outlined text-primary mb-base">history_edu</span>
+                    <h5 class="font-bold text-label-sm">Sesuai Kaidah</h5>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-surface-container-low dark:bg-surface-container-lowest border-t border-outline-variant dark:border-outline">
+        <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop py-stack-md max-w-container-max mx-auto">
+            <div class="flex flex-col md:flex-row items-center gap-stack-md mb-stack-md md:mb-0">
+                <div class="text-headline-md font-headline-md font-bold text-primary">ImlaScan</div>
+                <span class="text-secondary dark:text-secondary-fixed font-label-sm text-label-sm">© 2026 ImlaScan. All rights reserved.</span>
+            </div>
+            <div class="flex space-x-gutter">
+                <a class="text-secondary dark:text-secondary-fixed font-label-sm text-label-sm hover:underline hover:text-primary transition-all" href="#">Tentang Kami</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            const btnUpload = document.getElementById('tab-upload');
+            const btnPaste = document.getElementById('tab-paste');
+            const viewUpload = document.getElementById('view-upload');
+            const viewPaste = document.getElementById('view-paste');
+
+            if (tab === 'upload') {
+                btnUpload.classList.add('border-primary', 'text-primary', 'font-bold');
+                btnUpload.classList.remove('border-transparent', 'text-on-surface-variant');
+                btnPaste.classList.remove('border-primary', 'text-primary', 'font-bold');
+                btnPaste.classList.add('border-transparent', 'text-on-surface-variant');
+                viewUpload.classList.remove('hidden');
+                viewPaste.classList.add('hidden');
+            } else {
+                btnPaste.classList.add('border-primary', 'text-primary', 'font-bold');
+                btnPaste.classList.remove('border-transparent', 'text-on-surface-variant');
+                btnUpload.classList.remove('border-primary', 'text-primary', 'font-bold');
+                btnUpload.classList.add('border-transparent', 'text-on-surface-variant');
+                viewPaste.classList.remove('hidden');
+                viewUpload.classList.add('hidden');
+            }
+        }
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileStatus = document.getElementById('file-status');
+
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        function handleFiles(files) {
+            if (files && files.length > 0) {
+                const dt = new DataTransfer();
+                dt.items.add(files[0]);
+                fileInput.files = dt.files;
+                if (fileStatus) {
+                    fileStatus.textContent = '✓ ' + files[0].name + ' — siap dianalisis';
+                    fileStatus.classList.remove('hidden');
+                }
+            }
+        }
+
+        if (dropZone && fileInput) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev =>
+                dropZone.addEventListener(ev, preventDefaults, false));
+            ['dragenter', 'dragover'].forEach(ev =>
+                dropZone.addEventListener(ev, () => dropZone.classList.add('drag-over'), false));
+            ['dragleave', 'drop'].forEach(ev =>
+                dropZone.addEventListener(ev, () => dropZone.classList.remove('drag-over'), false));
+            dropZone.addEventListener('drop', e => handleFiles(e.dataTransfer.files), false);
+            fileInput.addEventListener('change', function () { handleFiles(this.files); });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('.ocr-reanalyze-form').forEach(f =>
+                f.addEventListener('submit', () => {
+                    document.getElementById('loadingOverlay').style.display = 'flex';
+                }));
+            const form = document.getElementById('scanForm');
+            if(form) {
+                form.addEventListener('submit', function() {
+                    const adaBerkas = fileInput && fileInput.files.length > 0;
+                    const nama = adaBerkas ? fileInput.files[0].name.toLowerCase() : '';
+                    const mesin = (form.querySelector('input[name="ocr_engine"]:checked') || {}).value || 'gemini';
+                    const pesanOcr = {
+                        gemini: 'Menjalankan Gemini OCR lalu analisis... Mohon tunggu ±30–60 detik.',
+                        tesseract: 'Menjalankan Tesseract OCR lalu analisis... Mohon tunggu beberapa detik.',
+                        keduanya: 'Menjalankan Gemini + Tesseract OCR lalu analisis... Mohon tunggu ±30–60 detik.'
+                    };
+                    document.getElementById('loadingMsg').textContent = (adaBerkas && !nama.endsWith('.txt'))
+                        ? pesanOcr[mesin] : 'Menganalisis teks... Mohon tunggu.';
+                    document.getElementById('loadingOverlay').style.display = 'flex';
+                    const submitBtn = document.getElementById('submitBtn');
+                    if(submitBtn) {
+                        submitBtn.style.pointerEvents = 'none';
+                        submitBtn.style.opacity = '0.8';
+                        submitBtn.innerHTML = `
+                            <span>Memproses...</span>
+                            <span class="material-symbols-outlined">hourglass_empty</span>
+                        `;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

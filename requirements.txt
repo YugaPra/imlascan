@@ -1,0 +1,27 @@
+# ── Inti aplikasi web ──────────────────────────────────
+Django>=5.2,<6.0
+python-dotenv>=1.0
+
+# ── Integrasi model AraT5 (Langkah 2) ──────────────────
+# Pasang di venv Python 3.12 (bukan 3.14 — wheel torch sering belum tersedia).
+# Untuk GPU (laptop Anda), ikuti perintah install torch sesuai CUDA dari
+# https://pytorch.org/get-started/locally/  (jangan hanya `pip install torch`
+# jika ingin akselerasi GPU).
+torch>=2.2
+# Disamakan dengan versi saat model dilatih (config.json: transformers_version 4.44.2).
+# Versi transformers lebih baru bentrok dengan tokenizers untuk T5 ('Unigram vocab dict').
+transformers==4.44.2
+tokenizers>=0.19,<0.20        # pasangan kompatibel untuk transformers 4.44.x
+sentencepiece>=0.1.99          # tokenizer AraT5 (SPM) butuh ini
+protobuf>=3.20                # kadang diperlukan T5Tokenizer
+accelerate>=0.30              # opsional, membantu manajemen device
+
+# ── OCR PDF/gambar via Google Vision (Langkah PDF) ─────
+PyMuPDF>=1.24                 # render halaman PDF -> gambar (pip-only, tanpa binary)
+requests>=2.31               # panggilan REST ke Google Vision
+
+# ── OCR pembanding: Tesseract (lokal) ─────────────────
+# Program Tesseract dipasang terpisah (winget install UB-Mannheim.TesseractOCR)
+# + model bahasa Arab: tessdata/ara.traineddata (tessdata_best).
+pytesseract>=0.3.10
+Pillow>=10.0
